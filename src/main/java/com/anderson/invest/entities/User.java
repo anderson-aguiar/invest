@@ -2,6 +2,7 @@ package com.anderson.invest.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,11 +20,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @Column(unique = true)
     private String email;
+
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @ColumnDefault(value = "'ROLE_USER'")
+    private Role role = Role.ROLE_USER;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

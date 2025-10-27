@@ -1,38 +1,32 @@
 package com.anderson.invest.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_wallet")
+@Table(name = "tb_asset")
 @EntityListeners(AuditingEntityListener.class)
-public class Wallet {
+public class Asset {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private BigDecimal balance;
 
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private String ticker;
+    private Type type;
 
+    private Integer riskLevel;
     @JsonManagedReference
-    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Investment> investments = new ArrayList<>();
-
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
@@ -42,14 +36,14 @@ public class Wallet {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    public Wallet() {
+    public Asset() {
     }
 
-    public Wallet(Long id, String name, BigDecimal balance, User user) {
+    public Asset(Long id, String ticker, Type type, Integer riskLevel) {
         this.id = id;
-        this.name = name;
-        this.balance = balance;
-        this.user = user;
+        this.ticker = ticker;
+        this.type = type;
+        this.riskLevel = riskLevel;
     }
 
     public Long getId() {
@@ -60,38 +54,30 @@ public class Wallet {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTicker() {
+        return ticker;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTicker(String ticker) {
+        this.ticker = ticker;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public Type getType() {
+        return type;
     }
 
-    public void setBalance(BigDecimal balance) {
-        if (balance.compareTo(BigDecimal.ZERO) >= 0) {
-            this.balance = balance;
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Integer getRiskLevel() {
+        return riskLevel;
+    }
+
+    public void setRiskLevel(Integer riskLevel) {
+        if (riskLevel >= 1 && riskLevel <= 5) {
+            this.riskLevel = riskLevel;
         }
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     public List<Investment> getInvestments() {
@@ -99,15 +85,15 @@ public class Wallet {
     }
 
     public void addInvestments(Investment investment) {
-        investments.add(investment);
-        investment.setWallet(this);
+        this.investments.add(investment);
+        investment.setAsset(this);
     }
 
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Wallet wallet = (Wallet) o;
-        return Objects.equals(id, wallet.id);
+        Asset asset = (Asset) o;
+        return Objects.equals(id, asset.id);
     }
 
     @Override
