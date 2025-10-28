@@ -6,16 +6,20 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "tb_user")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -77,6 +81,7 @@ public class User {
         this.email = email;
     }
 
+
     public String getPassword() {
         return password;
     }
@@ -97,12 +102,12 @@ public class User {
         return wallets;
     }
 
-    public void addWallet(Wallet wallet){
+    public void addWallet(Wallet wallet) {
         this.wallets.add(wallet);
         wallet.setUser(this);
     }
 
-    public void removeWallet(Wallet wallet){
+    public void removeWallet(Wallet wallet) {
         this.wallets.remove(wallet);
         wallet.setUser(null);
     }
@@ -126,4 +131,42 @@ public class User {
     public int hashCode() {
         return Objects.hash(id, email);
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(this.role.getRole()));
+
+        if (this.role == Role.ROLE_ADMIN) {
+            authorities.add(new SimpleGrantedAuthority(Role.ROLE_USER.getRole()));
+        }
+        return authorities;
+
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
 }

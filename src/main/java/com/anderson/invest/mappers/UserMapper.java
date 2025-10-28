@@ -1,18 +1,18 @@
 package com.anderson.invest.mappers;
 
-import com.anderson.invest.dtos.UserRequestDTO;
 import com.anderson.invest.dtos.UserMinDTO;
+import com.anderson.invest.dtos.UserRequestDTO;
 import com.anderson.invest.entities.Role;
 import com.anderson.invest.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@Configuration
+@Component
 public class UserMapper {
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     public User toEntity(UserRequestDTO dto) {
         if (dto == null) return null;
