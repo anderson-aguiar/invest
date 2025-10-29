@@ -2,20 +2,30 @@ package com.anderson.invest.dtos;
 
 public class LoginResponseDTO {
 
-    private String token;
+    private String accesstoken;
+    private String refreshToken;
 
     public LoginResponseDTO() {
     }
 
-    public LoginResponseDTO(String token) {
-        this.token = token;
+    public LoginResponseDTO(String accesstoken, String refreshToken) {
+        this.accesstoken = accesstoken;
+        this.refreshToken = refreshToken;
     }
 
-    public String getToken() {
-        return token;
+    public String getAccesstoken() {
+        return accesstoken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAccesstoken(String accesstoken) {
+        this.accesstoken = accesstoken;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }

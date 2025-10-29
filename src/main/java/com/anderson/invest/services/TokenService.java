@@ -14,25 +14,43 @@ import java.time.ZoneOffset;
 
 @Service
 public class TokenService {
-    @Value("${security.jwt.secret:MySecretKey}")
+    @Value("${security.jwt.secret}")
     private String secret;
 
-    @Value("${security.jwt.duration:86400}")
+    @Value("${security.jwt.duration}")
     private Long duration;
 
-    public String generateToken(User user) {
+    @Value("${security.jwt.refresh-duration}")
+    private Long refreshDuration;
+
+    public String generateAccessToken(User user) {
         try {
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             return JWT.create()
-                    .withIssuer("invest-api") // Quem emitiu o token
+                    .withIssuer("access-token") // Quem emitiu o token
                     .withSubject(user.getEmail()) // O usuário principal (email)
-                    .withExpiresAt(getExpirationDate()) // Data de expiração
+                    .withExpiresAt(getExpirationDate(duration)) // Data de expiração
                     .sign(algorithm);
 
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar token JWT", exception);
+        }
+    }
+    public String generateRefreshToken(User user) {
+        try {
+
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            return JWT.create()
+                    .withIssuer("refresh-token") // Quem emitiu o token
+                    .withSubject(user.getEmail()) // O usuário principal (email)
+                    .withExpiresAt(getExpirationDate(refreshDuration)) // Data de expiração
+                    .sign(algorithm);
+
+        } catch (JWTCreationException exception) {
+            throw new RuntimeException("Erro ao gerar refresh-token JWT", exception);
         }
     }
 
@@ -42,7 +60,22 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             return JWT.require(algorithm)
-                    .withIssuer("invest-api")
+                    .withIssuer("access-token")
+                    .build()
+                    .verify(token)
+                    .getSubject(); // Retorna o subject (email).
+
+        } catch (JWTVerificationException exception) {
+            return "";
+        }
+    }
+    public String validateRefreshToken(String token) {
+        try {
+            // Define o algoritmo para verificação.
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            return JWT.require(algorithm)
+                    .withIssuer("refresh-token")
                     .build()
                     .verify(token)
                     .getSubject(); // Retorna o subject (email).
@@ -52,7 +85,7 @@ public class TokenService {
         }
     }
 
-    private Instant getExpirationDate() {
+    private Instant getExpirationDate(Long duration) {
         return LocalDateTime.now().plusSeconds(duration).toInstant(ZoneOffset.of("-03:00"));
     }
 }

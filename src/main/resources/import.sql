@@ -1,1 +1,1 @@
-INSERT INTO tb_user (created_at, id, updated_at, email, name, password, role) VALUES ('2025-10-28 15:27:13.517382', 1, '2025-10-28 15:27:13.517382', 'anderson@email.com', 'Anderson Martins', '$2a$10$otwPEJPYXYuMN3Qq37cV..3c6kCRnXOuQBb2vZBHxMrlHCMnlHgkOROLE_USER', 'ROLE_USER');
+INSERT INTO tb_user (created_at, updated_at, email, name, password, role) VALUES ('2025-10-28 15:27:13.517382', '2025-10-28 15:27:13.517382', 'anderson@email.com', 'Anderson Martins', '$2a$10$otwPEJPYXYuMN3Qq37cV..3c6kCRnXOuQBb2vZBHxMrlHCMnlHgkO', 'ROLE_ADMIN');

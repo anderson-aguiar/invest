@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class UserService implements UserDetailsService {
 
@@ -27,6 +29,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserMinDTO insert(UserRequestDTO requestDTO) {
+
+        if(userRepository.existsByEmail(requestDTO.getEmail())){
+            throw new RuntimeException("Email já cadastrado");
+        }
         User user = userMapper.toEntity(requestDTO);
         userRepository.save(user);
         return userMapper.toUserMinDTO(user);
