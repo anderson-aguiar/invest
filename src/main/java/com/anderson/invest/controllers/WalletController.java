@@ -1,6 +1,7 @@
 package com.anderson.invest.controllers;
 
 import com.anderson.invest.dtos.WalletInsertResponseDTO;
+import com.anderson.invest.dtos.WalletMinDTO;
 import com.anderson.invest.dtos.WalletRequestDTO;
 import com.anderson.invest.services.WalletService;
 import jakarta.validation.Valid;
@@ -8,12 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequestMapping("wallets")
@@ -28,5 +27,15 @@ public class WalletController {
         WalletInsertResponseDTO responseDTO = walletService.insert(requestDTO, email);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<WalletMinDTO>> findAllWallets(Principal principal) {
+        String email = principal.getName();
+
+        List<WalletMinDTO> wallets = walletService.findAllWallets(email);
+
+        return ResponseEntity.ok(wallets);
     }
 }

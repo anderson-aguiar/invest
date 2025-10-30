@@ -17,7 +17,7 @@ spring:
       path: /h2-console
 security:
   jwt:
-    duration: 30
+    duration: 200
     refresh-duration: 900
     secret: myclientsecret
 cors:
