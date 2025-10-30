@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +49,12 @@ public class AssetService {
         assetRepository.save(asset);
 
         return assetMapper.toResponseDTO(asset);
+    }
+    @Transactional(readOnly = true)
+    public List<AssetResponseDTO> findaAll(){
+        return assetRepository.findAll()
+                .stream()
+                .map(assetMapper::toResponseDTO)
+                .toList();
     }
 }
