@@ -30,4 +30,11 @@ public class AssetController {
         assetService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AssetResponseDTO> update(@RequestBody @Valid AssetRequestDTO requestDTO, @PathVariable Long id){
+        AssetResponseDTO dto = assetService.update(requestDTO, id);
+
+        return ResponseEntity.ok(dto);
+    }
 }
