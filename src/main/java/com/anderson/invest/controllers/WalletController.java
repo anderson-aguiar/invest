@@ -1,8 +1,7 @@
 package com.anderson.invest.controllers;
 
-import com.anderson.invest.dtos.WalletInsertResponseDTO;
-import com.anderson.invest.dtos.WalletMinDTO;
-import com.anderson.invest.dtos.WalletRequestDTO;
+import com.anderson.invest.dtos.*;
+import com.anderson.invest.services.InvestmentService;
 import com.anderson.invest.services.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,9 @@ import java.util.List;
 public class WalletController {
     @Autowired
     private WalletService walletService;
+
+    @Autowired
+    private InvestmentService investmentService;
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -37,5 +39,17 @@ public class WalletController {
         List<WalletMinDTO> wallets = walletService.findAllWallets(email);
 
         return ResponseEntity.ok(wallets);
+    }
+
+    @PostMapping("/{id}/investments")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<InvestmentResponseDTO> addInvestment(
+            @RequestBody @Valid InvestmentRequestDTO requestDTO, @PathVariable Long id, Principal principal) {
+
+        String email = principal.getName();
+        InvestmentResponseDTO responseDTO = investmentService.insert(requestDTO, email);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+
     }
 }

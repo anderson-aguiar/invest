@@ -47,7 +47,7 @@ public class WalletService {
             throw new EntityNotFoundException("Usuário logado não encontrado no banco de dados");
         }
         List<WalletMinDTO> wallets = new ArrayList<>();
-        user.getWallets().forEach(w -> wallets.add(new WalletMinDTO(w.getName(), w.getCreatedAt().toLocalDate())));
+        user.getWallets().forEach(w -> wallets.add(new WalletMinDTO(w.getName(), w.getCreatedAt().toLocalDate(), w.getBalance())));
         return wallets;
     }
 }

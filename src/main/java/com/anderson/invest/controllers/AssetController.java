@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequestMapping("assets")
@@ -38,5 +40,9 @@ public class AssetController {
         return ResponseEntity.ok(dto);
     }
 
-
+    @GetMapping
+    public ResponseEntity<List<AssetResponseDTO>> findAll(){
+        List<AssetResponseDTO> assets = assetService.findaAll();
+        return ResponseEntity.ok(assets);
+    }
 }
