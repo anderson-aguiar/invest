@@ -4,7 +4,6 @@ import com.anderson.invest.dtos.AssetRequestDTO;
 import com.anderson.invest.dtos.AssetResponseDTO;
 import com.anderson.invest.services.AssetService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,8 +16,11 @@ import java.util.List;
 @RequestMapping("assets")
 public class AssetController {
 
-    @Autowired
-    private AssetService assetService;
+    private final AssetService assetService;
+
+    public AssetController(AssetService assetService) {
+        this.assetService = assetService;
+    }
 
     @PostMapping
     public ResponseEntity<AssetResponseDTO> insert(@RequestBody @Valid AssetRequestDTO requestDTO) {

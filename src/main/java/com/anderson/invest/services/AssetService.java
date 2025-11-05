@@ -6,7 +6,6 @@ import com.anderson.invest.entities.Asset;
 import com.anderson.invest.mappers.AssetMapper;
 import com.anderson.invest.repositories.AssetRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,11 +14,14 @@ import java.util.Optional;
 
 @Service
 public class AssetService {
-    @Autowired
-    private AssetRepository assetRepository;
 
-    @Autowired
-    private AssetMapper assetMapper;
+    private final AssetRepository assetRepository;
+    private final AssetMapper assetMapper;
+
+    public AssetService(AssetRepository assetRepository, AssetMapper assetMapper) {
+        this.assetRepository = assetRepository;
+        this.assetMapper = assetMapper;
+    }
 
     @Transactional
     public AssetResponseDTO insert(AssetRequestDTO requestDTO) {

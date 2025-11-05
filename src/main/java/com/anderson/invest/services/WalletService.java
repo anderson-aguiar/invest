@@ -9,7 +9,6 @@ import com.anderson.invest.mappers.WalletMapper;
 import com.anderson.invest.repositories.UserRepository;
 import com.anderson.invest.repositories.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,14 +18,15 @@ import java.util.List;
 @Service
 public class WalletService {
 
-    @Autowired
-    private WalletRepository walletRepository;
+    private final WalletRepository walletRepository;
+    private final UserRepository userRepository;
+    private final WalletMapper walletMapper;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private WalletMapper walletMapper;
+    public WalletService(WalletRepository walletRepository, UserRepository userRepository, WalletMapper walletMapper) {
+        this.walletRepository = walletRepository;
+        this.userRepository = userRepository;
+        this.walletMapper = walletMapper;
+    }
 
     @Transactional
     public WalletInsertResponseDTO insert(WalletRequestDTO requestDTO, String email) {

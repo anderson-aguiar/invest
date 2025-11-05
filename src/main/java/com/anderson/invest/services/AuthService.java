@@ -3,7 +3,6 @@ package com.anderson.invest.services;
 import com.anderson.invest.dtos.LoginRequestDTO;
 import com.anderson.invest.entities.User;
 import com.anderson.invest.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,14 +14,15 @@ import java.util.List;
 @Service
 public class AuthService {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final TokenService tokenService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private UserRepository userRepository;
+    public AuthService(AuthenticationManager authenticationManager, TokenService tokenService, UserRepository userRepository) {
+        this.authenticationManager = authenticationManager;
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
+    }
 
     public List<String> authenticateAndGenerateToken(LoginRequestDTO requestDTO) {
         List<String> tokens = new ArrayList<>();

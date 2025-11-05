@@ -12,28 +12,29 @@ import com.anderson.invest.repositories.InvestmentRepository;
 import com.anderson.invest.repositories.UserRepository;
 import com.anderson.invest.repositories.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class InvestmentService {
 
-    @Autowired
-    private InvestmentRepository investmentRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private AssetRepository assetRepository;
-    @Autowired
-    private InvestmentMapper investmentMapper;
-    @Autowired
-    private WalletRepository walletRepository;
+    private final InvestmentRepository investmentRepository;
+    private final UserRepository userRepository;
+    private final AssetRepository assetRepository;
+    private final InvestmentMapper investmentMapper;
+    private final WalletRepository walletRepository;
+
+    public InvestmentService(InvestmentRepository investmentRepository, UserRepository userRepository, AssetRepository assetRepository, InvestmentMapper investmentMapper, WalletRepository walletRepository) {
+        this.investmentRepository = investmentRepository;
+        this.userRepository = userRepository;
+        this.assetRepository = assetRepository;
+        this.investmentMapper = investmentMapper;
+        this.walletRepository = walletRepository;
+    }
 
 
     @Transactional

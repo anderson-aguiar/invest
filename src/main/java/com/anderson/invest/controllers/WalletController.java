@@ -4,7 +4,6 @@ import com.anderson.invest.dtos.*;
 import com.anderson.invest.services.InvestmentService;
 import com.anderson.invest.services.WalletService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,11 +15,14 @@ import java.util.List;
 @RestController
 @RequestMapping("wallets")
 public class WalletController {
-    @Autowired
-    private WalletService walletService;
 
-    @Autowired
-    private InvestmentService investmentService;
+    private final WalletService walletService;
+    private final InvestmentService investmentService;
+
+    public WalletController(WalletService walletService, InvestmentService investmentService) {
+        this.walletService = walletService;
+        this.investmentService = investmentService;
+    }
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")

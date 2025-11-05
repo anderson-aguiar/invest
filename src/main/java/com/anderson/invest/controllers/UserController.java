@@ -4,7 +4,6 @@ import com.anderson.invest.dtos.*;
 import com.anderson.invest.services.AuthService;
 import com.anderson.invest.services.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,10 +19,13 @@ import java.util.List;
 @RequestMapping("/auth")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private AuthService authService;
+    private final UserService userService;
+    private final AuthService authService;
+
+    public UserController(UserService userService, AuthService authService) {
+        this.userService = userService;
+        this.authService = authService;
+    }
 
 
     @PostMapping("/register")
