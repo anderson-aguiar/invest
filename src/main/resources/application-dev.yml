@@ -20,6 +20,12 @@ spring:
     port: 5672
     username: guest
     password: guest
+
+rabbitmq:
+  exchangeName: email.exchange
+  queueWelcome: email.welcome
+  queueInvestimentRemoved: email.investiment.removed
+
 security:
   jwt:
     duration: 200
