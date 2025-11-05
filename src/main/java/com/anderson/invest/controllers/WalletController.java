@@ -52,4 +52,13 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
 
     }
+
+    @GetMapping("/{walletId}/investments")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<InvestmentResponseDTO>> findAllInvestments(@PathVariable Long walletId, Principal principal) {
+        String email = principal.getName();
+        List<InvestmentResponseDTO> investments = investmentService.findAllInvest(email, walletId);
+
+        return ResponseEntity.ok(investments);
+    }
 }

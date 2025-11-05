@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -65,5 +67,25 @@ public class InvestmentService {
         optionalWallet.get().addInvestments(saveInvest);
 
         return investmentMapper.toResponseDTO(saveInvest);
+    }
+    @Transactional(readOnly = true)
+    public List<InvestmentResponseDTO> findAllInvest(String email, Long walletId){
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
+        Optional<Wallet> optionalWallet = walletRepository.findById(walletId);
+        if (optionalWallet.isEmpty()) {
+            throw new EntityNotFoundException("Carteira não encontrada");
+        }
+       if(!optionalWallet.get().getUser().equals(user)){
+           throw new SecurityException("Acesso negado: esta carteira não pertence ao usuário especificado.");
+       }
+
+        return optionalWallet.get()
+                .getInvestments()
+                .stream()
+                .map(investmentMapper::toResponseDTO)
+                .toList();
     }
 }
