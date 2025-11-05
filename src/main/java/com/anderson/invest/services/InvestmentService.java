@@ -6,6 +6,7 @@ import com.anderson.invest.entities.Asset;
 import com.anderson.invest.entities.Investment;
 import com.anderson.invest.entities.User;
 import com.anderson.invest.entities.Wallet;
+import com.anderson.invest.exceptions.InsufficientBalanceException;
 import com.anderson.invest.mappers.InvestmentMapper;
 import com.anderson.invest.repositories.AssetRepository;
 import com.anderson.invest.repositories.InvestmentRepository;
@@ -55,7 +56,7 @@ public class InvestmentService {
         BigDecimal walletBalance = optionalWallet.get().getBalance();
 
         if (walletBalance.compareTo(totalInvest) < 0) {
-            throw new RuntimeException("Saldo infuciente");
+            throw new InsufficientBalanceException("Saldo infuciente");
         }else{
             walletBalance = walletBalance.subtract(totalInvest);
             optionalWallet.get().setBalance(walletBalance);

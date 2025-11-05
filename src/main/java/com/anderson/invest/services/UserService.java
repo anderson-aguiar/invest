@@ -3,6 +3,7 @@ package com.anderson.invest.services;
 import com.anderson.invest.dtos.UserMinDTO;
 import com.anderson.invest.dtos.UserRequestDTO;
 import com.anderson.invest.entities.User;
+import com.anderson.invest.exceptions.EmailAlreadyExistsException;
 import com.anderson.invest.mappers.UserMapper;
 import com.anderson.invest.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +28,7 @@ public class UserService implements UserDetailsService {
     public UserMinDTO insert(UserRequestDTO requestDTO) {
 
         if(userRepository.existsByEmail(requestDTO.getEmail())){
-            throw new RuntimeException("Email já cadastrado");
+            throw new EmailAlreadyExistsException("Email já cadastrado");
         }
         User user = userMapper.toEntity(requestDTO);
         userRepository.save(user);

@@ -2,7 +2,9 @@ package com.anderson.invest.services;
 
 import com.anderson.invest.dtos.LoginRequestDTO;
 import com.anderson.invest.entities.User;
+import com.anderson.invest.exceptions.InvalidTokenException;
 import com.anderson.invest.repositories.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,11 +42,11 @@ public class AuthService {
         String email = tokenService.validateRefreshToken(refreshToken);
 
         if(email.isEmpty()){
-            throw new RuntimeException("Refresh token inválido ou expirado. Novo login necessário");
+            throw new InvalidTokenException("Refresh token inválido ou expirado. Novo login necessário");
         }
         User user = userRepository.findByEmail(email);
         if(user == null){
-            throw new RuntimeException("Usuário não encontrado");
+            throw new EntityNotFoundException("Usuário não encontrado");
         }
         return tokenService.generateAccessToken(user);
     }

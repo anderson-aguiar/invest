@@ -1,6 +1,7 @@
 package com.anderson.invest.services;
 
 import com.anderson.invest.entities.User;
+import com.anderson.invest.exceptions.InvalidTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -35,7 +36,7 @@ public class TokenService {
                     .sign(algorithm);
 
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar token JWT", exception);
+            throw new InvalidTokenException("Erro ao gerar token JWT");
         }
     }
     public String generateRefreshToken(User user) {
@@ -50,7 +51,7 @@ public class TokenService {
                     .sign(algorithm);
 
         } catch (JWTCreationException exception) {
-            throw new RuntimeException("Erro ao gerar refresh-token JWT", exception);
+            throw new InvalidTokenException("Erro ao gerar refresh-token JWT");
         }
     }
 
