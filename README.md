@@ -61,10 +61,10 @@ O **consumer** consome as mensagens e envia e-mails automáticos com o **Spring 
 
 ## 🧠 Health Check e Observabilidade
 - **Spring Boot Actuator:**  
-  - `/actuator/health`  
+  - `/actuator/health` → verificar tambem conexão com **DB** e **RabbitMQ**.  
   - `/actuator/info`  
   - `/actuator/metrics`  
-- **Custom Health Check:** `/health/custom` → verifica conexão com **DB** e **RabbitMQ**.
+
 
 ---
 
