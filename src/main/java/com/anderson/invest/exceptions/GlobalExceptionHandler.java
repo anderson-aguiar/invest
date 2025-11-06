@@ -51,5 +51,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, status);
     }
 
+@ExceptionHandler(CustomAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleCustomAcessDenied(CustomAccessDeniedException exception) {
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        ErrorResponse errorResponse = new ErrorResponse(status.value(), status.getReasonPhrase(), exception.getMessage());
+        return new ResponseEntity<>(errorResponse, status);
+    }
+
 
 }

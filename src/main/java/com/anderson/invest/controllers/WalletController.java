@@ -6,7 +6,6 @@ import com.anderson.invest.services.WalletService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -25,7 +24,6 @@ public class WalletController {
     }
 
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<WalletInsertResponseDTO> insert(@RequestBody @Valid WalletRequestDTO requestDTO, Principal principal) {
         String email = principal.getName();
         WalletInsertResponseDTO responseDTO = walletService.insert(requestDTO, email);
@@ -34,7 +32,6 @@ public class WalletController {
     }
 
     @GetMapping
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<WalletMinDTO>> findAllWallets(Principal principal) {
         String email = principal.getName();
 
@@ -44,7 +41,6 @@ public class WalletController {
     }
 
     @PostMapping("/{id}/investments")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<InvestmentResponseDTO> addInvestment(
             @RequestBody @Valid InvestmentRequestDTO requestDTO, @PathVariable Long id, Principal principal) {
 
@@ -56,7 +52,6 @@ public class WalletController {
     }
 
     @GetMapping("/{walletId}/investments")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<InvestmentResponseDTO>> findAllInvestments(@PathVariable Long walletId, Principal principal) {
         String email = principal.getName();
         List<InvestmentResponseDTO> investments = investmentService.findAllInvest(email, walletId);
@@ -65,7 +60,6 @@ public class WalletController {
     }
 
     @DeleteMapping("/investment/{id}")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteInvest(@PathVariable Long id, Principal principal) {
         String email = principal.getName();
         investmentService.delete(email, id);
@@ -73,5 +67,15 @@ public class WalletController {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping("{walletId}/balance")
+    public ResponseEntity<WalletInsertResponseDTO> updateBalance(
+            @RequestBody @Valid WalletReqBalanceUpadateDTO request,
+            @PathVariable Long walletId, Principal principal) {
+
+        String email = principal.getName();
+        WalletInsertResponseDTO response = walletService.updateBalance(email, walletId, request.balance());
+
+        return ResponseEntity.ok(response);
+    }
 
 }
