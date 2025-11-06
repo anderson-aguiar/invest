@@ -1,3 +1,10 @@
+## Infos do App, usado pelo Actuator
+info:
+  app:
+    name: api-gestao-investimentos-pessoais
+    version: 1.0.0
+    description: API de Gestão de Investimentos Pessoais
+## ----------------------------------
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
@@ -5,7 +12,6 @@ spring:
     username: sa
     password:
     initialization-mode: always
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -21,15 +27,38 @@ spring:
     username: guest
     password: guest
 
+## Configs do Actuator ##
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+  info:
+    env:
+      enabled: true
+
+  health:
+    db:
+      enabled: true
+    rabbit:
+      enabled: true
+##------------------------
+## Values para exchange e queues do rabbit ##
 rabbitmq:
   exchangeName: email.exchange
   queueWelcome: email.welcome
   queueInvestimentRemoved: email.investiment.removed
 
+## Values para security
 security:
   jwt:
     duration: 200
     refresh-duration: 900
     secret: myclientsecret
+
 cors:
   origins: http://localhost:3000, http://localhost:5173
