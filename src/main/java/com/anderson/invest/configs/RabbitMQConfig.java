@@ -4,43 +4,56 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMQConfig {
 
-    @Value("${rabbitmq.exchangeName")
+    @Value("${rabbitmq.exchangeName}")
     public String emailExchange;
-    @Value("${rabbitmq.queueWelcome")
+    @Value("${rabbitmq.queueWelcome}")
     public String queueWelcome;
-    @Value("${rabbitmq.queueInvestimentRemoved")
+    @Value("${rabbitmq.queueInvestimentRemoved}")
     public String queueInvestimentRemoved;
 
     @Bean
-    public TopicExchange emailExchange(){
-        return new TopicExchange(emailExchange);
+    public TopicExchange emailExchangeBean() {
+        return new TopicExchange(this.emailExchange);
     }
 
     @Bean
-    public Queue welcomeQueue(){
-        return new Queue(queueWelcome, true);
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        return new RabbitAdmin(connectionFactory);
     }
 
     @Bean
-    public Queue investmentRemovedQueue(){
-        return new Queue(queueInvestimentRemoved, true);
+    public ApplicationRunner runner(RabbitAdmin rabbitAdmin) {
+        return args -> rabbitAdmin.initialize();
     }
 
     @Bean
-    public Binding bindingWelcome(Queue welcomeQueue, TopicExchange emailExchange){
+    public Queue welcomeQueue() {
+        return new Queue(this.queueWelcome, true);
+    }
+
+    @Bean
+    public Queue investmentRemovedQueue() {
+        return new Queue(this.queueInvestimentRemoved, true);
+    }
+
+    @Bean
+    public Binding bindingWelcome(Queue welcomeQueue, TopicExchange emailExchange) {
         return BindingBuilder.bind(welcomeQueue).to(emailExchange).with("email.welcome");
     }
 
     @Bean
-    public Binding bindingInvestmentRemoved(Queue investmentRemovedQueue, TopicExchange emailExchange){
+    public Binding bindingInvestmentRemoved(Queue investmentRemovedQueue, TopicExchange emailExchange) {
         return BindingBuilder.bind(investmentRemovedQueue).to(emailExchange).with("email.investment.removed");
     }
 

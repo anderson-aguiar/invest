@@ -2,6 +2,7 @@ package com.anderson.invest.controllers;
 
 import com.anderson.invest.dtos.*;
 import com.anderson.invest.services.AuthService;
+import com.anderson.invest.services.EmailPublisherService;
 import com.anderson.invest.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -22,9 +23,11 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
 
-    public UserController(UserService userService, AuthService authService) {
+
+    public UserController(UserService userService, AuthService authService, EmailPublisherService emailPublisherService) {
         this.userService = userService;
         this.authService = authService;
+        this.emailPublisherService = emailPublisherService;
     }
 
 
