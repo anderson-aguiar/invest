@@ -1,7 +1,6 @@
 package com.anderson.invest.services;
 
 import com.anderson.invest.dtos.InvestRemovedResponseDTO;
-import com.anderson.invest.dtos.InvestmentRemoveEvent;
 import com.anderson.invest.dtos.InvestmentRequestDTO;
 import com.anderson.invest.dtos.InvestmentResponseDTO;
 import com.anderson.invest.entities.Asset;
@@ -9,7 +8,6 @@ import com.anderson.invest.entities.Investment;
 import com.anderson.invest.entities.User;
 import com.anderson.invest.entities.Wallet;
 import com.anderson.invest.exceptions.InsufficientBalanceException;
-import com.anderson.invest.exceptions.RabbitMQException;
 import com.anderson.invest.mappers.InvestmentMapper;
 import com.anderson.invest.repositories.AssetRepository;
 import com.anderson.invest.repositories.InvestmentRepository;
@@ -128,7 +126,7 @@ public class InvestmentService {
                     investment.getWallet().getName(),
                     wallet.getBalance());
             //aqui publica um evento se a transação com o banco for bem sucedida
-            eventPublisher.publishEvent(new InvestmentRemoveEvent(msg));
+            eventPublisher.publishEvent(msg);
         }
 
         investmentRepository.deleteById(id);

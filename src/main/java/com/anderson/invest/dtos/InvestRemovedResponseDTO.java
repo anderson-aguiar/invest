@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public record InvestRemovedResponseDTO(
         String email,
-        BigDecimal balance,
+        BigDecimal investmentBalance,
         String assetTicker,
         String walletname,
-        BigDecimal totalWalletBalance
+        BigDecimal actualWalletBalance
 ) {}

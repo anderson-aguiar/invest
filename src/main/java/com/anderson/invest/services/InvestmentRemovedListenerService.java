@@ -1,6 +1,6 @@
 package com.anderson.invest.services;
 
-import com.anderson.invest.dtos.InvestmentRemoveEvent;
+import com.anderson.invest.dtos.InvestRemovedResponseDTO;
 import com.anderson.invest.exceptions.RabbitMQException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +20,9 @@ public class InvestmentRemovedListenerService {
 
     //se tudo ocorrer bem com a transação com o banco, ai sim é enviado a msg para a fila do rabbit
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void handleInvestmentRemoveEvent(InvestmentRemoveEvent event) {
+    public void handleInvestmentRemoveEvent(InvestRemovedResponseDTO message) {
         try {
-            emailPublisherService.sendInvestmentRemovedMessage(event.dto());
+            emailPublisherService.sendInvestmentRemovedMessage(message);
         } catch (RabbitMQException e) {
             log.warn("Falha ao enviar mensagem de venda do investimento: {}", e.getMessage());
         }
