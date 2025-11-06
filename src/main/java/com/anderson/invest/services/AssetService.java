@@ -52,6 +52,7 @@ public class AssetService {
 
         return assetMapper.toResponseDTO(asset);
     }
+
     @Transactional(readOnly = true)
     public List<AssetResponseDTO> findaAll(){
         return assetRepository.findAll()

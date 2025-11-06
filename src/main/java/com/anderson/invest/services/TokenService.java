@@ -72,7 +72,7 @@ public class TokenService {
     }
     public String validateRefreshToken(String token) {
         try {
-            // Define o algoritmo para verificação.
+
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
             return JWT.require(algorithm)

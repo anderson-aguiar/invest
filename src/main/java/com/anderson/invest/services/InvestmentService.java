@@ -1,5 +1,6 @@
 package com.anderson.invest.services;
 
+import com.anderson.invest.dtos.InvestRemovedResponseDTO;
 import com.anderson.invest.dtos.InvestmentRequestDTO;
 import com.anderson.invest.dtos.InvestmentResponseDTO;
 import com.anderson.invest.entities.Asset;
@@ -7,12 +8,16 @@ import com.anderson.invest.entities.Investment;
 import com.anderson.invest.entities.User;
 import com.anderson.invest.entities.Wallet;
 import com.anderson.invest.exceptions.InsufficientBalanceException;
+import com.anderson.invest.exceptions.RabbitMQException;
 import com.anderson.invest.mappers.InvestmentMapper;
 import com.anderson.invest.repositories.AssetRepository;
 import com.anderson.invest.repositories.InvestmentRepository;
 import com.anderson.invest.repositories.UserRepository;
 import com.anderson.invest.repositories.WalletRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,18 +28,24 @@ import java.util.Optional;
 @Service
 public class InvestmentService {
 
+    private final Logger log = LoggerFactory.getLogger(InvestmentService.class);
     private final InvestmentRepository investmentRepository;
     private final UserRepository userRepository;
     private final AssetRepository assetRepository;
     private final InvestmentMapper investmentMapper;
     private final WalletRepository walletRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public InvestmentService(InvestmentRepository investmentRepository, UserRepository userRepository, AssetRepository assetRepository, InvestmentMapper investmentMapper, WalletRepository walletRepository) {
+    public InvestmentService(InvestmentRepository investmentRepository,
+                             UserRepository userRepository,
+                             AssetRepository assetRepository,
+                             InvestmentMapper investmentMapper, WalletRepository walletRepository, EmailPublisherService emailPublisherService, ApplicationEventPublisher eventPublisher) {
         this.investmentRepository = investmentRepository;
         this.userRepository = userRepository;
         this.assetRepository = assetRepository;
         this.investmentMapper = investmentMapper;
         this.walletRepository = walletRepository;
+        this.eventPublisher = eventPublisher;
     }
 
 
@@ -57,7 +68,7 @@ public class InvestmentService {
 
         if (walletBalance.compareTo(totalInvest) < 0) {
             throw new InsufficientBalanceException("Saldo infuciente");
-        }else{
+        } else {
             walletBalance = walletBalance.subtract(totalInvest);
             optionalWallet.get().setBalance(walletBalance);
         }
@@ -70,8 +81,9 @@ public class InvestmentService {
 
         return investmentMapper.toResponseDTO(saveInvest);
     }
+
     @Transactional(readOnly = true)
-    public List<InvestmentResponseDTO> findAllInvest(String email, Long walletId){
+    public List<InvestmentResponseDTO> findAllInvest(String email, Long walletId) {
         User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new EntityNotFoundException("Usuário não encontrado");
@@ -80,9 +92,9 @@ public class InvestmentService {
         if (optionalWallet.isEmpty()) {
             throw new EntityNotFoundException("Carteira não encontrada");
         }
-       if(!optionalWallet.get().getUser().equals(user)){
-           throw new SecurityException("Acesso negado: esta carteira não pertence ao usuário especificado.");
-       }
+        if (!optionalWallet.get().getUser().equals(user)) {
+            throw new SecurityException("Acesso negado: esta carteira não pertence ao usuário especificado.");
+        }
 
         return optionalWallet.get()
                 .getInvestments()
@@ -90,4 +102,36 @@ public class InvestmentService {
                 .map(investmentMapper::toResponseDTO)
                 .toList();
     }
+
+    @Transactional
+    public void delete(String email, Long id) {
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new EntityNotFoundException("Usuário não encontrado");
+        }
+        Investment investment = investmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Investimento não localizado"));
+
+        if (!user.getWallets().contains(investment.getWallet())) {
+            throw new EntityNotFoundException("Investimento não pertence ao usuário logado");
+        } else {
+            Wallet wallet = investment.getWallet();
+            BigDecimal balance = wallet.getBalance();
+            BigDecimal total = investment.getPurchasePrice().multiply(BigDecimal.valueOf(investment.getQuantity()));
+            wallet.setBalance(balance.add(total));
+            walletRepository.save(wallet);
+            InvestRemovedResponseDTO msg = new InvestRemovedResponseDTO(
+                    email,
+                    balance,
+                    investment.getAsset().getTicker(),
+                    investment.getWallet().getName(),
+                    wallet.getBalance());
+            //aqui publica um evento se a transação com o banco for bem sucedida
+            eventPublisher.publishEvent(msg);
+        }
+
+        investmentRepository.deleteById(id);
+
+    }
+
 }

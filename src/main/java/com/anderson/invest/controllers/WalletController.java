@@ -63,4 +63,14 @@ public class WalletController {
 
         return ResponseEntity.ok(investments);
     }
+
+    @DeleteMapping("/investment/{id}")
+    public ResponseEntity<Void> deleteInvest(@PathVariable Long id, Principal principal) {
+        String email = principal.getName();
+        investmentService.delete(email, id);
+
+        return ResponseEntity.ok().build();
+    }
+
+
 }

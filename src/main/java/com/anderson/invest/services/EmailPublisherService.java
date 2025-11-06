@@ -1,5 +1,6 @@
 package com.anderson.invest.services;
 
+import com.anderson.invest.dtos.InvestRemovedResponseDTO;
 import com.anderson.invest.dtos.UserMinDTO;
 import com.anderson.invest.exceptions.RabbitMQException;
 import org.springframework.amqp.AmqpException;
@@ -25,8 +26,15 @@ public class EmailPublisherService {
             rabbitTemplate.convertAndSend(emailExchange, "email.welcome", message);
 
         }catch (AmqpException e){
-            throw new RabbitMQException("Falha ao enviar a mensagem para a fila ");
+            throw new RabbitMQException("Falha ao enviar a mensagem de boas vindas.");
+        }
+    }
 
+    public void sendInvestmentRemovedMessage(InvestRemovedResponseDTO message){
+        try {
+            rabbitTemplate.convertAndSend(emailExchange, "email.investment.removed", message);
+        } catch (AmqpException e) {
+            throw new RabbitMQException("Falha ao enviar a mensagem de investimento removido.");
         }
     }
 }
