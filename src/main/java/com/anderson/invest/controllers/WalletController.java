@@ -65,6 +65,7 @@ public class WalletController {
     }
 
     @DeleteMapping("/investment/{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> deleteInvest(@PathVariable Long id, Principal principal) {
         String email = principal.getName();
         investmentService.delete(email, id);

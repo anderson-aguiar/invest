@@ -1,6 +1,7 @@
 package com.anderson.invest.services;
 
 import com.anderson.invest.dtos.InvestRemovedResponseDTO;
+import com.anderson.invest.dtos.InvestmentRemoveEvent;
 import com.anderson.invest.dtos.InvestmentRequestDTO;
 import com.anderson.invest.dtos.InvestmentResponseDTO;
 import com.anderson.invest.entities.Asset;
@@ -122,12 +123,12 @@ public class InvestmentService {
             walletRepository.save(wallet);
             InvestRemovedResponseDTO msg = new InvestRemovedResponseDTO(
                     email,
-                    balance,
+                    total,
                     investment.getAsset().getTicker(),
                     investment.getWallet().getName(),
                     wallet.getBalance());
             //aqui publica um evento se a transação com o banco for bem sucedida
-            eventPublisher.publishEvent(msg);
+            eventPublisher.publishEvent(new InvestmentRemoveEvent(msg));
         }
 
         investmentRepository.deleteById(id);
