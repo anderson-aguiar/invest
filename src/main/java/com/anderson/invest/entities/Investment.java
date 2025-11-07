@@ -34,8 +34,7 @@ public class Investment {
     public Investment() {
     }
 
-    public Investment(Long id, Double quantity, BigDecimal purchasePrice, LocalDate puchaseDate, Wallet wallet, Asset asset) {
-        this.id = id;
+    public Investment(Double quantity, BigDecimal purchasePrice, LocalDate puchaseDate, Wallet wallet, Asset asset) {
         this.quantity = quantity;
         this.purchasePrice = purchasePrice;
         this.puchaseDate = puchaseDate;
